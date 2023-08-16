@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const config = require("config");
 const auth  = require("./routes/Auth");
-const  PORT = 3000;
+require("custom-env").env();
+const  PORT =  process.env.PORT || 3000;
 
-mongoose.connect("mongodb://127.0.0.1:27017/tasks").then(()=>{
+mongoose.connect(config.get(process.MONGO_URI)).then(()=>{
     console.log("database connected");
 }).catch();
 //  enabling express json 

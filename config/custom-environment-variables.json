@@ -1,5 +1,0 @@
-{
-    "MONGO_URI":"TASK_MONGO_URI",
-    "PORT":"TASK_PORT",
-    "SECRET":"TASK_SECRET"
-}

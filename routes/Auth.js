@@ -1,10 +1,10 @@
+require("custom-env").env();
 const express =  require("express");
 const router  = express.Router();
 const {userSchema,validateUser} =  require("../models/User");
 
 // configutration manager for the app 
 
-const config = require("config");
 
 // password hashing function 
 
@@ -41,7 +41,7 @@ router.post("/signup",async(req,res)=>{
      
      await user.save();
      
-     token   = await jwt.sign( _.pick(user,["username","email"]),config.get("SECRET"));
+     token   = await jwt.sign( _.pick(user,["username","email"]),process.env.SECRET);
      
      return sendResponse(res, "success",  200, {token:token}, message = 'signup success');
 });
