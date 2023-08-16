@@ -2,7 +2,7 @@ require("custom-env").env();
 const express =  require("express");
 const router  = express.Router();
 const {userSchema,validateUser} =  require("../models/User");
-
+const SECRET =  process.env.SECRET || "HAPPYCODINGMAN";
 // configutration manager for the app 
 
 
@@ -10,7 +10,7 @@ const {userSchema,validateUser} =  require("../models/User");
 
 const bcrypt = require("bcrypt");
 
-const { sendResponse, loginValidator } = require("../middlewares/Helper");
+const { sendResponse, loginValidator,validateID } = require("../helpers/Helper");
 
 // library used to select specific keys from an object with ease
 const _ = require("lodash");
@@ -41,20 +41,23 @@ router.post("/signup",async(req,res)=>{
      
      await user.save();
      
-     token   = await jwt.sign( _.pick(user,["username","email"]),process.env.SECRET);
+     token   = await jwt.sign( _.pick(user,["username","email"]),SECRET);
      
      return sendResponse(res, "success",  200, {token:token}, message = 'signup success');
 });
 
 // login users in
+
 router.post("/login",async(req,res)=>{
+
    //  using the helper function validate the input from user
+
    const {values,error} = loginValidator(req.body);
    if(error){
       return sendResponse("error",400,[],message=error.details[0].message);
    }
    // find the user with email 
-   let user  = await userSchema.findOne({email:req.body.email});
+   let user  = await userSchema.findOne({email:req.body.email}).select("-password");
    if(!user){
       return sendResponse(res,401,[],message="invalid login attempt");
    }
@@ -63,7 +66,11 @@ router.post("/login",async(req,res)=>{
    if(!checkPass){
       return sendResponse(res,401,[],message="invalid login attempt");
    }
-   let token =  await jwt.sign()
+   let token =  await jwt.sign(user,SECRET,{expiresIn:"1hr"});
+   return sendResponse(res,"success",200,{token:token},message="login successful");
 });
+
+
+
 
 module.exports = router;
