@@ -20,6 +20,15 @@ const task = new mongoose.Schema({
 priority:{
     type:String,
     enum:["medium","high","low"]
+},
+// list of assignees to a task 
+assignee:{
+    type:[{type:mongoose.Types.ObjectId,ref:"User"}]
+},
+// creator of a task
+owner:{
+type:mongoose.Types.ObjectId,
+ref:"User"
 }
 });
 module.exports.taskSchema = mongoose.model("Task",task);
